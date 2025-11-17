@@ -23,7 +23,14 @@ WHERE name NOT LIKE '% %';
 -- Название треков, которые содержат слово «мой» или «my».
 
 SELECT name FROM track
-WHERE name LIKE '%my%' OR name LIKE '%My%';
+WHERE name ILIKE 'my %'
+OR name ILIKE '% my'
+OR name ILIKE '% my %'
+OR name ILIKE 'my'
+OR name ILIKE 'мой %'
+OR name ILIKE '% мой'
+OR name ILIKE '% мой %'
+OR name ILIKE 'мой';
 
 -- Задание 3
 
@@ -35,10 +42,9 @@ GROUP BY name;
 
 -- Количество треков, вошедших в альбомы 2019–2020 годов.
 
-SELECT album.name, COUNT(track.name) FROM album
-JOIN track ON track.album_id = album.id
-WHERE year_of_release BETWEEN '2019-01-01' AND '2020-12-31'
-GROUP BY album.name;
+SELECT COUNT(track.id) FROM track
+JOIN album ON track.album_id = album.id
+WHERE year_of_release BETWEEN '2019-01-01' AND '2020-12-31';
 
 -- Средняя продолжительность треков по каждому альбому.
 
@@ -49,10 +55,11 @@ GROUP BY album.name;
 -- Все исполнители, которые не выпустили альбомы в 2020 году.
 
 SELECT artist.name FROM artist
-JOIN artist_album ON artist_album.artist_id = artist.id
-JOIN album ON artist_album.album_id = album.id
-WHERE year_of_release NOT BETWEEN '2019-12-31' AND '2021-01-01'
-GROUP BY artist.name;
+WHERE artist.name NOT IN (
+	SELECT artist.name FROM artist
+	JOIN artist_album ON artist_album.artist_id = artist.id
+	JOIN album ON album.id = artist_album.album_id
+	WHERE year_of_release BETWEEN '2020-01-01' AND '2020-12-31');
 
 -- Названия сборников, в которых присутствует исполнитель Bob Dylan.
 
