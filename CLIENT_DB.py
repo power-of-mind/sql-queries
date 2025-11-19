@@ -1,10 +1,10 @@
 import psycopg2
 from psycopg2.sql import SQL, Identifier
 
-'''
-Функция, создающая структуру базы данных
-'''
 def create_db(conn):
+    """
+    Функция, создающая структуру базы данных
+    """
     with conn.cursor() as cur:
         cur.execute('''
             CREATE TABLE IF NOT EXISTS client(
@@ -25,10 +25,10 @@ def create_db(conn):
         ''')
         conn.commit()
 
-'''
-Функция, позволяющая добавить нового клиента
-'''
 def add_client(name, surname, email):
+    """
+    Функция, позволяющая добавить нового клиента
+    """
     with conn.cursor() as cur:
         cur.execute('''
             SELECT email FROM client
@@ -44,11 +44,11 @@ def add_client(name, surname, email):
             VALUES (%s, %s, %s) RETURNING id;
             ''', (name, surname, email))
         print(f'ID созданного клиента: {cur.fetchone()}')
-
-'''
-Функция, позволяющая добавить телефон для существующего клиента
-'''
+        
 def add_phone(phone, client_id):
+    """
+    Функция, позволяющая добавить телефон для существующего клиента
+    """
     with conn.cursor() as cur:
         cur.execute('''
             SELECT phone FROM phones
@@ -74,10 +74,10 @@ def add_phone(phone, client_id):
             ''', (phone, client_id))
         print(f'ID созданной записи телефона: {cur.fetchone()}')
 
-'''
-Функция, позволяющая изменить данные о клиенте
-'''
 def update_client(client_id, name=None, surname=None, email=None):
+    """
+    Функция, позволяющая изменить данные о клиенте
+    """
     with conn.cursor() as cur:
         cur.execute('''
             SELECT id FROM client
@@ -102,10 +102,10 @@ def update_client(client_id, name=None, surname=None, email=None):
             ''', (client_id,))
         print(f'Обновленная запись клиента: {cur.fetchone()}')
 
-'''
-Функция, позволяющая удалить телефон для существующего клиента
-'''
 def delete_phone(client_id, phone):
+    """
+    Функция, позволяющая удалить телефон для существующего клиента
+    """
     with conn.cursor() as cur:
         cur.execute('''
             SELECT phone FROM phones
@@ -123,10 +123,10 @@ def delete_phone(client_id, phone):
         conn.commit()
         print(f'Телефон {phone} у клиента {client_id} удален')
 
-'''
-Функция, позволяющая удалить существующего клиента
-'''
 def delete_client(client_id):
+    """
+    Функция, позволяющая удалить существующего клиента
+    """
     with conn.cursor() as cur:
         cur.execute('''
             SELECT id FROM client
@@ -142,10 +142,10 @@ def delete_client(client_id):
             ''', (client_id,))
         print(f'Клиент {client_id} и его телефоны удалены')
 
-'''
-Функция, позволяющая найти клиента по его данным: имени, фамилии, email или телефону
-'''
 def find_client(name = None, surname = None, email = None, phone = None):
+    """
+    Функция, позволяющая найти клиента по его данным: имени, фамилии, email или телефону
+    """
     with conn.cursor() as cur:
         cur.execute("""
             SELECT client.*, phones.phone FROM client 
